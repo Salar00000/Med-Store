@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | MediCare</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .cart-page { padding: 3rem 0 6rem; min-height: 70vh; }
+        .cart-page-title { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 0.3rem; }
+        .cart-page-sub { color: var(--text-muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .cart-list { display: flex; flex-direction: column; gap: 1rem; }
+
+        .cart-item {
+            display: flex; align-items: center; gap: 1.5rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            animation: slideIn 0.4s ease both;
+        }
+
+        .cart-item:hover {
+            border-color: rgba(0,212,255,0.3);
+            transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .item-emoji {
+            font-size: 3rem;
+            background: rgba(0,212,255,0.08);
+            width: 80px; height: 80px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(0,212,255,0.15);
+            flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+
+        .cart-item:hover .item-emoji { transform: scale(1.1) rotate(5deg); }
+
+        .item-info { flex-grow: 1; }
+        .item-title { font-weight: 700; font-size: 1.05rem; color: white; margin-bottom: 0.2rem; }
+        .item-category { font-size: 0.78rem; color: var(--primary); margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .item-price { color: var(--primary); font-weight: 800; font-size: 1.1rem; font-family: 'Space Grotesk', sans-serif; }
+
+        .qty-controls {
+            display: flex; align-items: center; gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+        .qty-btn {
+            width: 32px; height: 32px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(0,212,255,0.3);
+            background: rgba(0,212,255,0.08);
+            color: var(--primary);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+            border-color: var(--primary);
+        }
+
+        .qty-val {
+            font-weight: 800; min-width: 28px;
+            text-align: center; color: white;
+            font-size: 1rem;
+        }
+
+        .remove-btn {
+            background: transparent;
+            border: 1px solid rgba(255,45,120,0.3);
+            color: var(--accent);
+            padding: 0.4rem 0.9rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255,45,120,0.15);
+            border-color: var(--accent);
+        }
+
+        /* Summary Card */
+        .summary-card {
+            position: sticky; top: 100px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+        }
+
+        .summary-title { color: white; font-size: 1.3rem; font-weight: 800; margin-bottom: 1.5rem; }
+
+        /* Free Shipping Bar */
+        .shipping-bar { margin-bottom: 1.5rem; }
+        .shipping-bar-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .shipping-bar-label span { color: var(--neon-green); font-weight: 700; }
+        .shipping-bar-track {
+            height: 6px; background: rgba(255,255,255,0.08);
+            border-radius: 10px; overflow: hidden;
+        }
+        .shipping-bar-fill {
+            height: 100%; background: var(--gradient-primary);
+            border-radius: 10px; transition: width 0.5s ease;
+            box-shadow: 0 0 8px rgba(0,212,255,0.5);
+        }
+
+        .summary-row {
+            display: flex; justify-content: space-between;
+            margin-bottom: 0.8rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .total-row {
+            border-top: 1px solid var(--glass-border);
+            padding-top: 1rem; margin-top: 0.5rem;
+            font-weight: 800; font-size: 1.3rem;
+            color: white;
+        }
+
+        .total-row span:last-child { color: var(--primary); }
+
+        /* Promo Code */
+        .promo-input {
+            display: flex; gap: 0.5rem; margin: 1.5rem 0;
+        }
+
+        .promo-field {
+            flex: 1; padding: 0.65rem 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem; outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .promo-field:focus { border-color: var(--primary); }
+        .promo-field::placeholder { color: var(--text-muted); }
+
+        .promo-btn {
+            padding: 0.65rem 1rem;
+            background: rgba(0,212,255,0.1);
+            border: 1px solid rgba(0,212,255,0.3);
+            color: var(--primary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 700; font-size: 0.85rem;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .promo-btn:hover { background: var(--primary); color: var(--dark-bg); }
+
+        .continue-link {
+            display: block; text-align: center;
+            margin-top: 1rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .continue-link:hover { opacity: 0.7; }
+
+        .empty-cart {
+            text-align: center; padding: 4rem 2rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed var(--glass-border);
+            border-radius: var(--radius-lg);
+        }
+
+        .empty-cart-icon { font-size: 5rem; margin-bottom: 1rem; opacity: 0.4; }
+        .empty-cart h3 { font-size: 1.5rem; color: white; margin-bottom: 0.5rem; }
+        .empty-cart p { color: var(--text-muted); margin-bottom: 2rem; }
+
+        @media (max-width: 768px) {
+            .cart-layout { grid-template-columns: 1fr; }
+            .summary-card { position: static; }
+            .cart-item { flex-wrap: wrap; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scrollProgress"></div>
+    <canvas id="particleCanvas"></canvas>
+
+    <header class="header" id="siteHeader">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🏥</span>
+                <h1>MediCare</h1>
+            </a>
+            <nav class="nav">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="medicines.html" class="nav-link">Medicines Info</a></li>
+                    <li><a href="index.html#products" class="nav-link">Products</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="cart.html" class="cart-btn active" aria-label="Cart">🛒 <span class="cart-count">0</span></a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container cart-page">
+        <div class="cart-page-title">🛒 Shopping Cart</div>
+        <div class="cart-page-sub">Review your items before checkout</div>
+
+        <div class="cart-layout">
+            <div class="cart-list" id="cartItems"></div>
+
+            <div class="summary-card">
+                <div class="summary-title">Order Summary</div>
+
+                <div class="shipping-bar">
+                    <div class="shipping-bar-label">Free shipping: <span id="shippingText">$50.00 away</span></div>
+                    <div class="shipping-bar-track"><div class="shipping-bar-fill" id="shippingFill" style="width:0%"></div></div>
+                </div>
+
+                <div class="promo-input">
+                    <input class="promo-field" type="text" id="promoCode" placeholder="Promo code">
+                    <button class="promo-btn" onclick="applyPromo()">Apply</button>
+                </div>
+
+                <div class="summary-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+                <div class="summary-row"><span>Tax (5%)</span><span id="tax">$0.00</span></div>
+                <div class="summary-row"><span>Shipping</span><span id="shipping">$4.99</span></div>
+                <div class="summary-row total-row"><span>Total</span><span id="total">$0.00</span></div>
+
+                <button onclick="proceedToCheckout()" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1.5rem;">
+                    Proceed to Checkout →
+                </button>
+                <a href="index.html#products" class="continue-link">← Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <div class="copyright">© 2026 MediCare Inc. All rights reserved.</div>
+                <div class="footer-badges">
+                    <div class="footer-badge">🔐 SSL Secured</div>
+                    <div class="footer-badge">✅ FDA Approved</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        document.addEventListener('DOMContentLoaded', () => { renderCart(); initScrollProgress(); initHeader(); initMobileMenu(); initParticles(); });
+
+        function initScrollProgress() {
+            const bar = document.getElementById('scrollProgress');
+            if (!bar) return;
+            window.addEventListener('scroll', () => { bar.style.width = (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%'; }, { passive: true });
+        }
+
+        function initHeader() {
+            const h = document.getElementById('siteHeader');
+            window.addEventListener('scroll', () => h?.classList.toggle('scrolled', window.scrollY > 60), { passive: true });
+        }
+
+        function initMobileMenu() {
+            const toggle = document.getElementById('mobileMenuToggle');
+            const nav = document.getElementById('navLinks');
+            const ov = document.createElement('div');
+            ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;opacity:0;pointer-events:none;transition:opacity 0.3s;';
+            document.body.appendChild(ov);
+            const close = () => { toggle?.classList.remove('active'); nav?.classList.remove('active'); ov.style.opacity='0'; ov.style.pointerEvents='none'; };
+            toggle?.addEventListener('click', () => { const o = !nav.classList.contains('active'); toggle.classList.toggle('active',o); nav.classList.toggle('active',o); ov.style.opacity=o?'1':'0'; ov.style.pointerEvents=o?'all':'none'; });
+            ov.addEventListener('click', close);
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particleCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+            window.addEventListener('resize', resize, {passive:true}); resize();
+            const dots = Array.from({length:50}, () => ({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4, r:Math.random()*1.5+.5 }));
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                dots.forEach(d => { d.x+=d.vx; d.y+=d.vy; if(d.x<0||d.x>canvas.width)d.vx*=-1; if(d.y<0||d.y>canvas.height)d.vy*=-1; ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fillStyle='rgba(0,212,255,0.3)'; ctx.fill(); });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            const badge = document.querySelector('.cart-count');
+            const totalQty = cart.reduce((a,i) => a+(i.qty||1), 0);
+            if (badge) { badge.textContent = totalQty; badge.style.display = totalQty>0?'flex':'none'; }
+
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="empty-cart fade-in visible"><div class="empty-cart-icon">🛒</div><h3>Your cart is empty</h3><p>Add some amazing healthcare products to get started.</p><a href="index.html#products" class="btn btn-primary" style="display:inline-flex;">🛍️ Start Shopping</a></div>`;
+                updateSummary(0);
+                return;
+            }
+
+            container.innerHTML = cart.map((item, i) => `
+                <div class="cart-item" style="animation-delay:${i*0.1}s">
+                    <div class="item-emoji">${item.emoji||'💊'}</div>
+                    <div class="item-info">
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-category">${item.category||'Healthcare'}</div>
+                        <div class="item-price">$${item.price.toFixed(2)}</div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQty(${item.id},-1)">−</button>
+                            <span class="qty-val">${item.qty||1}</span>
+                            <button class="qty-btn" onclick="updateQty(${item.id},1)">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="color:var(--primary);font-weight:800;font-size:1.1rem;margin-bottom:0.8rem;">$${(item.price*(item.qty||1)).toFixed(2)}</div>
+                        <button class="remove-btn" onclick="removeItem(${item.id})">🗑️ Remove</button>
+                    </div>
+                </div>`).join('');
+
+            const sub = cart.reduce((a,i) => a+i.price*(i.qty||1), 0);
+            updateSummary(sub);
+        }
+
+        function updateSummary(sub) {
+            const tax = sub * 0.05;
+            const freeShip = sub >= 50;
+            const ship = freeShip ? 0 : (sub === 0 ? 0 : 4.99);
+            const total = sub + tax + ship;
+            document.getElementById('subtotal').textContent = `$${sub.toFixed(2)}`;
+            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('shipping').textContent = freeShip ? '🎉 Free!' : (sub === 0 ? '$0.00' : '$4.99');
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+            const pct = Math.min((sub / 50) * 100, 100);
+            document.getElementById('shippingFill').style.width = pct + '%';
+            const rem = Math.max(50 - sub, 0);
+            document.getElementById('shippingText').textContent = freeShip ? '🎉 Free shipping unlocked!' : `$${rem.toFixed(2)} away`;
+        }
+
+        function updateQty(id, d) {
+            const item = cart.find(i => i.id === id);
+            if (item) { item.qty=(item.qty||1)+d; if (item.qty<1) removeItem(id); else { saveCart(); renderCart(); } }
+        }
+
+        function removeItem(id) {
+            cart = cart.filter(i => i.id !== id);
+            saveCart(); renderCart();
+        }
+
+        function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
+
+        function applyPromo() {
+            const code = document.getElementById('promoCode').value.trim().toUpperCase();
+            code === 'MEDICARE10' ? showToast('✅ 10% discount applied!') : showToast('❌ Invalid promo code', 'error');
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) { showToast('❌ Cart is empty!', 'error'); return; }
+            window.location.href = 'checkout.html';
+        }
+
+        function showToast(msg, type='success') {
+            document.querySelector('.toast')?.remove();
+            const t = document.createElement('div'); t.className='toast';
+            t.style.borderLeftColor = type==='error'?'var(--accent)':'var(--neon-green)';
+            t.textContent = msg; document.body.appendChild(t);
+            setTimeout(()=>t.classList.add('show'),10);
+            setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Encyclopedia | MediCare</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .med-page { padding: 4rem 0 6rem; }
+        .search-hero { text-align: center; padding: 3rem 1rem 1rem; max-width: 800px; margin: 0 auto; }
+        .search-hero h2 { font-size:2.8rem; font-weight:800; color:white; margin-bottom:0.5rem; }
+        .search-hero h2 span { background:var(--gradient-primary); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .search-hero p { color:var(--text-muted); font-size:1.05rem; margin-bottom:2rem; }
+        .search-box {
+            display:flex; max-width:600px; margin:0 auto;
+            background:rgba(255,255,255,0.06);
+            padding:0.5rem; border-radius:50px;
+            border:1px solid rgba(0,212,255,0.3);
+            box-shadow:0 0 30px rgba(0,212,255,0.1);
+        }
+        .search-box input {
+            flex:1; border:none; padding:0.8rem 1.5rem;
+            outline:none; font-size:1rem; border-radius:50px;
+            background:transparent; color:white; font-family:'Outfit',sans-serif;
+        }
+        .search-box input::placeholder { color:var(--text-muted); }
+        .search-box button {
+            background:var(--gradient-primary); color:white; border:none;
+            padding:0.8rem 1.8rem; border-radius:50px; cursor:pointer;
+            font-weight:700; font-size:0.9rem; transition:all 0.3s;font-family:'Outfit',sans-serif;
+        }
+        .search-box button:hover { transform:scale(1.05); box-shadow:var(--shadow-primary); }
+        .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.8rem; margin-top:2.5rem; }
+        .info-card {
+            display:flex; flex-direction:column;
+            background:rgba(255,255,255,0.04);
+            border:1px solid var(--glass-border);
+            border-radius:var(--radius-lg); padding:2rem;
+            transition:all 0.4s ease; height:100%;
+        }
+        .info-card:hover { border-color:rgba(0,212,255,0.35); transform:translateY(-6px); box-shadow:var(--shadow-glow); }
+        .info-header { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid var(--glass-border); }
+        .info-icon {
+            font-size:2rem; background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.2);
+            width:56px; height:56px; display:flex; align-items:center; justify-content:center;
+            border-radius:var(--radius-md);
+        }
+        .info-title { font-size:1.15rem; font-weight:700; color:white; }
+        .info-body { color:var(--text-muted); line-height:1.8; margin-bottom:1.5rem; flex-grow:1; font-size:0.9rem; }
+        .info-body strong { color:var(--primary); }
+        .source-link {
+            display:inline-flex; align-items:center; gap:0.5rem;
+            color:var(--primary); text-decoration:none; font-weight:700;
+            font-size:0.85rem; transition:all 0.2s; margin-top:auto;
+            border:1px solid rgba(0,212,255,0.3); padding:0.4rem 1rem;
+            border-radius:25px; background:rgba(0,212,255,0.08);
+        }
+        .source-link:hover { background:rgba(0,212,255,0.18); gap:0.8rem; }
+    </style>
+</head>
+<body>
+    <div id="scrollProgress"></div>
+    <canvas id="particleCanvas"></canvas>
+
+    <header class="header" id="siteHeader">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🏥</span>
+                <h1>MediCare</h1>
+            </a>
+            <nav class="nav">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle"><span></span><span></span><span></span></button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="medicines.html" class="nav-link active">Medicines Info</a></li>
+                    <li><a href="index.html#products" class="nav-link">Products</a></li>
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="cart.html" class="cart-btn" aria-label="Cart">🛒 <span class="cart-count">0</span></a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container med-page">
+        <div class="search-hero fade-in">
+            <div class="section-tag">✦ KNOWLEDGE BASE</div>
+            <h2 style="margin-top:1rem;">Medicine <span>Encyclopedia</span></h2>
+            <p>Comprehensive guide to common medications, their uses, and trusted medical sources.</p>
+            <form action="https://www.google.com/search" method="GET" target="_blank" class="search-box">
+                <input type="text" name="q" placeholder="Search for a medicine (e.g., 'Amoxicillin side effects')..." required>
+                <button type="submit">🔍 Search</button>
+            </form>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card fade-in stagger-1">
+                <div class="info-header">
+                    <div class="info-icon">💊</div>
+                    <div class="info-title">Analgesics (Pain Relievers)</div>
+                </div>
+                <div class="info-body">Analgesics are medicines that relieve pain without loss of consciousness. They range from OTC options like Aspirin and Acetaminophen to prescription drugs.<br><br><strong>Common Uses:</strong> Headaches, muscle aches, arthritis, dental pain.</div>
+                <a href="https://medlineplus.gov/painrelievers.html" target="_blank" class="source-link">MedlinePlus →</a>
+            </div>
+            <div class="info-card fade-in stagger-2">
+                <div class="info-header">
+                    <div class="info-icon">🦠</div>
+                    <div class="info-title">Antibiotics</div>
+                </div>
+                <div class="info-body">Powerful medicines that fight bacterial infections and save lives when used properly.<br><br><strong>Important:</strong> Antibiotics do NOT work on viral infections like colds and flu.</div>
+                <a href="https://www.cdc.gov/antibiotic-use/index.html" target="_blank" class="source-link">CDC Guidelines →</a>
+            </div>
+            <div class="info-card fade-in stagger-3">
+                <div class="info-header">
+                    <div class="info-icon">🤧</div>
+                    <div class="info-title">Antihistamines</div>
+                </div>
+                <div class="info-body">Drugs that treat allergy symptoms by blocking histamine, a chemical released by the immune system.<br><br><strong>Common Uses:</strong> Seasonal allergies, hives, insect bites.</div>
+                <a href="https://www.mayoclinic.org/drugs-supplements/antihistamine-oral-route-parenteral-route-rectal-route/description/drg-20070373" target="_blank" class="source-link">Mayo Clinic →</a>
+            </div>
+            <div class="info-card fade-in stagger-1">
+                <div class="info-header">
+                    <div class="info-icon">🌡️</div>
+                    <div class="info-title">Antipyretics</div>
+                </div>
+                <div class="info-body">Substances that reduce fever by acting on the hypothalamus to lower body temperature.<br><br><strong>Examples:</strong> Ibuprofen, Paracetamol.</div>
+                <a href="https://www.webmd.com/first-aid/fevers-causes-symptoms-treatments" target="_blank" class="source-link">WebMD Guide →</a>
+            </div>
+            <div class="info-card fade-in stagger-2">
+                <div class="info-header">
+                    <div class="info-icon">🧴</div>
+                    <div class="info-title">Antiseptics</div>
+                </div>
+                <div class="info-body">Antimicrobial substances applied to skin to reduce infection risk. Essential for first-aid kits.<br><br><strong>Common Uses:</strong> Cleaning cuts, scratches, surgical wounds.</div>
+                <a href="https://www.healthline.com/health/what-is-antiseptic" target="_blank" class="source-link">Healthline →</a>
+            </div>
+            <div class="info-card fade-in stagger-3">
+                <div class="info-header">
+                    <div class="info-icon">🍊</div>
+                    <div class="info-title">Vitamins &amp; Supplements</div>
+                </div>
+                <div class="info-body">Organic compounds needed in small quantities, mostly from food or supplementation.<br><br><strong>Key Types:</strong> Vitamin C (Immunity), Vitamin D (Bones), B12 (Energy).</div>
+                <a href="https://ods.od.nih.gov/factsheets/list-all/" target="_blank" class="source-link">NIH Fact Sheets →</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <div class="copyright">© 2026 MediCare Inc. All rights reserved.</div>
+                <div class="footer-badges">
+                    <div class="footer-badge">⚕️ Medical Disclaimer</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function(){
+            const cart=JSON.parse(localStorage.getItem('cart'))||[];
+            const count=cart.reduce((a,i)=>a+(i.qty||1),0);
+            const b=document.querySelector('.cart-count');
+            if(b){b.textContent=count;b.style.display=count===0?'none':'flex';}
+
+            // Scroll progress
+            const bar=document.getElementById('scrollProgress');
+            window.addEventListener('scroll',()=>{if(bar)bar.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';},{passive:true});
+
+            // Header scroll
+            const h=document.getElementById('siteHeader');
+            window.addEventListener('scroll',()=>h?.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+
+            // Mobile menu
+            const toggle=document.getElementById('mobileMenuToggle'),nav=document.getElementById('navLinks');
+            const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;opacity:0;pointer-events:none;transition:opacity 0.3s;';document.body.appendChild(ov);
+            const close=()=>{toggle?.classList.remove('active');nav?.classList.remove('active');ov.style.opacity='0';ov.style.pointerEvents='none';};
+            toggle?.addEventListener('click',()=>{const o=!nav.classList.contains('active');toggle.classList.toggle('active',o);nav.classList.toggle('active',o);ov.style.opacity=o?'1':'0';ov.style.pointerEvents=o?'all':'none';});
+            ov.addEventListener('click',close);
+
+            // Scroll animations
+            const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+            document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+            // Particles
+            const c=document.getElementById('particleCanvas');
+            if(c){const ctx=c.getContext('2d');const r=()=>{c.width=window.innerWidth;c.height=window.innerHeight;};window.addEventListener('resize',r,{passive:true});r();
+            const dots=Array.from({length:40},()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()+.5}));
+            (function draw(){ctx.clearRect(0,0,c.width,c.height);dots.forEach(d=>{d.x+=d.vx;d.y+=d.vy;if(d.x<0||d.x>c.width)d.vx*=-1;if(d.y<0||d.y>c.height)d.vy*=-1;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(0,212,255,0.25)';ctx.fill();});requestAnimationFrame(draw);})();}
+        })();
+    </script>
+</body>
+</html>  }
+    </script>
+</body>
+
+</html>

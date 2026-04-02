@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare | Premium Healthcare & Medicines</title>
+    <meta name="description" content="MediCare — Your trusted partner for authentic medicines, fast delivery, and expert healthcare consultations.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div id="scrollProgress"></div>
+
+<!-- Page Transition -->
+<div id="pageTransition"></div>
+
+<!-- Particle Canvas -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- Header -->
+<header class="header" id="siteHeader">
+    <div class="container">
+        <a href="index.html" class="logo">
+            <span class="logo-icon">🏥</span>
+            <h1>MediCare</h1>
+        </a>
+        <nav class="nav">
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" id="mobileMenuToggle">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" class="nav-link active">Home</a></li>
+                <li><a href="medicines.html" class="nav-link">Medicines Info</a></li>
+                <li><a href="#products" class="nav-link">Products</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search products..." aria-label="Search products">
+                    <button class="search-btn" aria-label="Search">🔍</button>
+                </div>
+                <a href="cart.html" class="cart-btn" id="cartBtn" aria-label="View Cart">
+                    🛒 <span class="cart-count">0</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-mesh"></div>
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Trusted By 10,000+ Patients
+            </div>
+            <h2>
+                Your Health,<br>
+                <span class="typing-wrapper">
+                    <span class="highlight-text" id="typingText">Our Priority.</span><span class="typing-cursor"></span>
+                </span>
+            </h2>
+            <p>Experience the new standard in online healthcare. Authentic medicines, rapid delivery, and expert consultations at your fingertips — all in one premium platform.</p>
+            <div class="hero-btns">
+                <a href="#products" class="btn btn-primary">🛍️ Shop Now</a>
+                <a href="#about" class="btn btn-outline">Learn More</a>
+            </div>
+            <div class="hero-trust">
+                <div class="trust-item"><span class="check">✓</span> FDA Approved</div>
+                <div class="trust-item"><span class="check">✓</span> Secure Payments</div>
+                <div class="trust-item"><span class="check">✓</span> Free Returns</div>
+            </div>
+        </div>
+        <div class="hero-visual" id="heroVisual">
+            <!-- injected by JS -->
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section fade-in">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" data-target="10000" data-suffix="+">0</div>
+                <div class="stat-label">Happy Customers</div>
+                <div class="stat-divider"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="500" data-suffix="+">0</div>
+                <div class="stat-label">Products Available</div>
+                <div class="stat-divider"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="98" data-suffix="%">0</div>
+                <div class="stat-label">Satisfaction Rate</div>
+                <div class="stat-divider"></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="24" data-suffix="/7">0</div>
+                <div class="stat-label">Expert Support</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Band -->
+<section class="features-band">
+    <div class="container features-grid">
+        <div class="feature-item fade-in stagger-1">
+            <i>⚡</i>
+            <h3>Fast Delivery</h3>
+            <p>Same-day shipping available in select areas</p>
+        </div>
+        <div class="feature-item fade-in stagger-2">
+            <i>🛡️</i>
+            <h3>100% Secure</h3>
+            <p>Safe payments & data protection</p>
+        </div>
+        <div class="feature-item fade-in stagger-3">
+            <i>🎧</i>
+            <h3>24/7 Support</h3>
+            <p>Expert pharmacists always online</p>
+        </div>
+        <div class="feature-item fade-in stagger-4">
+            <i>✅</i>
+            <h3>Certified Quality</h3>
+            <p>All products FDA-verified & authentic</p>
+        </div>
+    </div>
+</section>
+
+<!-- Trust Badges -->
+<section class="trust-section">
+    <div class="container">
+        <div class="trust-badges">
+            <div class="trust-badge"><span class="trust-badge-icon">🏅</span> FDA Approved Products</div>
+            <div class="trust-badge"><span class="trust-badge-icon">🔐</span> SSL Encrypted Checkout</div>
+            <div class="trust-badge"><span class="trust-badge-icon">🚚</span> Free Shipping Over $50</div>
+            <div class="trust-badge"><span class="trust-badge-icon">💊</span> Licensed Pharmacy</div>
+            <div class="trust-badge"><span class="trust-badge-icon">🔄</span> 30-Day Free Returns</div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section id="products" class="products-section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag">✦ CATALOGUE</div>
+            <h2 class="section-title">Featured <span>Products</span></h2>
+            <p class="section-desc">Handpicked essentials for your health and wellness journey</p>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="category-pills" id="categoryPills">
+            <button class="pill active" data-category="all">All Products</button>
+            <button class="pill" data-category="Medicine">💊 Medicine</button>
+            <button class="pill" data-category="Vitamins">🍊 Vitamins</button>
+            <button class="pill" data-category="Devices">🌡️ Devices</button>
+            <button class="pill" data-category="Protection">😷 Protection</button>
+            <button class="pill" data-category="Essentials">⛑️ Essentials</button>
+        </div>
+
+        <div class="products-controls">
+            <div class="results-count">Showing <span id="resultsCount">8</span> products</div>
+            <select id="sortSelect" class="filter-select" aria-label="Sort products">
+                <option value="default">Sort by</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="price-asc">Price (Low → High)</option>
+                <option value="price-desc">Price (High → Low)</option>
+            </select>
+        </div>
+
+        <div id="productsGrid" class="products-grid"></div>
+        <div id="noResults" class="no-results" style="display:none;">
+            <div class="no-results-icon">🔍</div>
+            <h3>No products found</h3>
+            <p>Try adjusting your search or filter criteria</p>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials-section" id="testimonials">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag">✦ REVIEWS</div>
+            <h2 class="section-title">What Our <span>Customers Say</span></h2>
+            <p class="section-desc">Real stories from real patients who trust MediCare</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card fade-in stagger-1">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"MediCare has completely transformed how I manage my family's healthcare. The delivery is incredibly fast and every product is genuine. I'll never order from anywhere else!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SA</div>
+                    <div>
+                        <div class="author-name">Sarah Ahmed</div>
+                        <div class="author-role">Verified Customer · Dubai</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in stagger-2">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"As a nurse, I recommend MediCare to all my patients. The product quality and accuracy of information is outstanding. Their 24/7 pharmacist support is a life-saver."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">MK</div>
+                    <div>
+                        <div class="author-name">Maria Khan</div>
+                        <div class="author-role">Registered Nurse · Karachi</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in stagger-3">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"The interface is beautiful and so easy to use. Got my blood pressure monitor delivered same-day. Incredible service — feels like healthcare from the future!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JR</div>
+                    <div>
+                        <div class="author-name">James Rodriguez</div>
+                        <div class="author-role">Verified Customer · London</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter-card fade-in">
+            <h2>Stay Healthy, Stay Informed</h2>
+            <p>Subscribe for exclusive deals, health tips, and new product launches delivered to your inbox.</p>
+            <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+                <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+                <button type="submit" class="btn btn-primary">Subscribe 🚀</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer id="about" class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="index.html" class="logo" style="margin-bottom:0.5rem; display:inline-flex;">
+                    <span class="logo-icon">🏥</span>
+                    <h1>MediCare</h1>
+                </a>
+                <p>Your trusted partner in health and wellness since 2005. Bringing pharmaceutical-grade care to your doorstep.</p>
+                <div class="footer-socials">
+                    <a href="#" class="social-btn" aria-label="Facebook">📘</a>
+                    <a href="#" class="social-btn" aria-label="Twitter">🐦</a>
+                    <a href="#" class="social-btn" aria-label="Instagram">📸</a>
+                    <a href="#" class="social-btn" aria-label="LinkedIn">💼</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="medicines.html">Medicines Info</a>
+                    <a href="cart.html">Cart</a>
+                    <a href="checkout.html">Checkout</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Categories</h4>
+                <div class="footer-links">
+                    <a href="#products">Medicines</a>
+                    <a href="#products">Vitamins</a>
+                    <a href="#products">Devices</a>
+                    <a href="#products">Protection</a>
+                    <a href="#products">Essentials</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><span>📧</span> support@medicare.com</div>
+                <div class="footer-contact-item"><span>📞</span> +1 (800) 123-4567</div>
+                <div class="footer-contact-item"><span>📍</span> 123 Health St, NY</div>
+                <div class="footer-contact-item"><span>🕐</span> 24/7 Available</div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="copyright">© 2026 MediCare Inc. All rights reserved.</div>
+            <div class="footer-badges">
+                <div class="footer-badge">🔐 SSL Secured</div>
+                <div class="footer-badge">✅ FDA Approved</div>
+                <div class="footer-badge">💳 PCI Compliant</div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Product Modal -->
+<div id="productModal" class="modal" aria-hidden="true">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+        <button class="modal-close" id="modalClose" aria-label="Close modal">×</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- Mini Cart -->
+<div id="miniCart" class="mini-cart">
+    <div class="mini-cart-header">
+        <h3>🛒 Your Cart</h3>
+        <button class="mini-cart-close" id="miniCartClose" aria-label="Close cart">×</button>
+    </div>
+    <div class="mini-cart-items" id="miniCartItems"></div>
+    <div class="mini-cart-footer">
+        <div class="mini-cart-total">
+            <span>Total:</span>
+            <span id="miniCartTotal">$0.00</span>
+        </div>
+        <a href="cart.html" class="btn btn-primary" style="width:100%; justify-content:center;">View Cart →</a>
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<a href="cart.html" class="fab" aria-label="Go to Cart" id="fabBtn">🛒</a>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

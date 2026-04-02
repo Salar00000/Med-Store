@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | MediCare</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .checkout-page { padding: 3rem 0 6rem; }
+        .page-title { font-size: 2.2rem; font-weight: 800; color: white; margin-bottom: 0.3rem; }
+        .page-sub { color: var(--text-muted); margin-bottom: 2.5rem; font-size: 0.9rem; }
+
+        /* Step Indicator */
+        .steps {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; margin-bottom: 3rem;
+        }
+        .step {
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; z-index: 1;
+        }
+        .step-circ {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1rem; color: var(--text-muted);
+            transition: all 0.4s ease;
+        }
+        .step.active .step-circ {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            color: white;
+            box-shadow: var(--shadow-primary);
+        }
+        .step.done .step-circ { background: rgba(57,255,20,0.2); border-color: var(--neon-green); color: var(--neon-green); }
+        .step-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem; font-weight: 600; }
+        .step.active .step-label { color: var(--primary); }
+        .step-line {
+            width: 80px; height: 2px;
+            background: var(--glass-border);
+            margin: 0 0.5rem;
+            align-self: flex-start; margin-top: 22px;
+            transition: background 0.4s ease;
+        }
+        .step-line.active { background: var(--gradient-primary); box-shadow: 0 0 8px rgba(0,212,255,0.4); }
+
+        /* Step Panels */
+        .step-panel { display: none; animation: stepIn 0.4s ease; }
+        .step-panel.active { display: block; }
+        @keyframes stepIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem; align-items: start;
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-card-title {
+            font-size: 1.15rem; font-weight: 800; color: white;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .fg-full { grid-column: 1 / -1; }
+
+        .form-group { position: relative; }
+        .form-group label {
+            display: block;
+            font-size: 0.82rem; font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem; letter-spacing: 0.3px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.25s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+        }
+
+        .form-group input::placeholder { color: var(--text-muted); }
+        .form-group input.valid { border-color: var(--neon-green); }
+        .form-group input.invalid { border-color: var(--accent); }
+
+        .field-hint {
+            position: absolute; right: 0.8rem; top: 2.4rem;
+            font-size: 1rem;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .form-group input.valid ~ .field-hint.ok { opacity: 1; }
+        .form-group input.invalid ~ .field-hint.err { opacity: 1; }
+
+        /* Payment Methods */
+        .pay-methods { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .pay-method {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            cursor: pointer; transition: all 0.2s;
+            font-size: 0.9rem; font-weight: 600; color: var(--text-muted);
+            background: var(--glass-bg);
+        }
+        .pay-method.selected { border-color: var(--primary); color: var(--primary); background: rgba(0,212,255,0.08); }
+        .pay-method span:first-child { font-size: 1.2rem; }
+
+        /* Step Nav Buttons */
+        .step-nav { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* Order Summary Sidebar */
+        .order-sidebar {
+            position: sticky; top: 100px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+        }
+
+        .order-sidebar-title { font-size: 1.1rem; font-weight: 800; color: white; margin-bottom: 1.2rem; }
+        .order-item-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+        .order-item-row:last-child { border-bottom: none; }
+        .order-item-name { color: var(--text-muted); }
+        .order-item-price { color: white; font-weight: 600; }
+        .order-divider { height: 1px; background: var(--glass-border); margin: 1rem 0; }
+        .order-total-row { display: flex; justify-content: space-between; font-weight: 800; font-size: 1.2rem; color: white; }
+        .order-total-row span:last-child { color: var(--primary); }
+
+        .security-note {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.8rem; color: var(--text-muted);
+            margin-top: 1rem; justify-content: center;
+        }
+
+        /* Success Overlay */
+        .success-overlay {
+            position: fixed; inset: 0;
+            background: rgba(5,13,26,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .success-overlay.active { opacity: 1; pointer-events: all; }
+        .success-icon { font-size: 6rem; margin-bottom: 1.5rem; animation: successPop 0.6s ease; }
+        @keyframes successPop { 0% { transform:scale(0) rotate(-20deg); } 70%{transform:scale(1.2) rotate(5deg);} 100%{transform:scale(1) rotate(0);} }
+        .success-overlay h2 { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 0.8rem; }
+        .success-overlay p { color: var(--text-muted); margin-bottom: 2rem; font-size: 1.1rem; }
+
+        @media (max-width: 768px) {
+            .checkout-layout { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .order-sidebar { position: static; }
+            .steps { gap: 0; }
+            .step-line { width: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scrollProgress"></div>
+    <canvas id="particleCanvas"></canvas>
+
+    <header class="header" id="siteHeader">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🏥</span>
+                <h1>MediCare</h1>
+            </a>
+            <nav class="nav">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="cart.html" class="nav-link">← Back to Cart</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container checkout-page">
+        <div class="page-title">🔒 Secure Checkout</div>
+        <div class="page-sub">Complete your order in 3 easy steps</div>
+
+        <!-- Step Indicator -->
+        <div class="steps">
+            <div class="step active" id="stepEl1">
+                <div class="step-circ">1</div>
+                <div class="step-label">Shipping</div>
+            </div>
+            <div class="step-line" id="line1"></div>
+            <div class="step" id="stepEl2">
+                <div class="step-circ">2</div>
+                <div class="step-label">Payment</div>
+            </div>
+            <div class="step-line" id="line2"></div>
+            <div class="step" id="stepEl3">
+                <div class="step-circ">3</div>
+                <div class="step-label">Review</div>
+            </div>
+        </div>
+
+        <div class="checkout-layout">
+            <div class="checkout-main">
+                <!-- Step 1 -->
+                <div class="step-panel active" id="panel1">
+                    <div class="form-card">
+                        <div class="form-card-title">📍 Shipping Information</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>First Name *</label>
+                                <input type="text" id="fname" placeholder="John" oninput="validateField(this,'text')">
+                                <span class="field-hint ok">✅</span><span class="field-hint err">❌</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name *</label>
+                                <input type="text" id="lname" placeholder="Doe" oninput="validateField(this,'text')">
+                                <span class="field-hint ok">✅</span><span class="field-hint err">❌</span>
+                            </div>
+                            <div class="form-group fg-full">
+                                <label>Email Address *</label>
+                                <input type="email" id="email" placeholder="john@example.com" oninput="validateField(this,'email')">
+                                <span class="field-hint ok">✅</span><span class="field-hint err">❌</span>
+                            </div>
+                            <div class="form-group fg-full">
+                                <label>Phone Number</label>
+                                <input type="tel" placeholder="+1 (555) 000-0000">
+                            </div>
+                            <div class="form-group fg-full">
+                                <label>Street Address *</label>
+                                <input type="text" id="addr" placeholder="123 Main Street" oninput="validateField(this,'text')">
+                            </div>
+                            <div class="form-group">
+                                <label>City *</label>
+                                <input type="text" id="city" placeholder="New York" oninput="validateField(this,'text')">
+                            </div>
+                            <div class="form-group">
+                                <label>ZIP Code *</label>
+                                <input type="text" id="zip" placeholder="10001" maxlength="10" oninput="validateField(this,'zip')">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-nav">
+                        <a href="cart.html" class="btn btn-ghost">← Back</a>
+                        <button class="btn btn-primary" onclick="goStep(2)">Continue to Payment →</button>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-panel" id="panel2">
+                    <div class="form-card">
+                        <div class="form-card-title">💳 Payment Details</div>
+                        <div class="pay-methods">
+                            <div class="pay-method selected" onclick="selectPay(this)"><span>💳</span> Card</div>
+                            <div class="pay-method" onclick="selectPay(this)"><span>📱</span> PayPal</div>
+                            <div class="pay-method" onclick="selectPay(this)"><span>🍎</span> Apple Pay</div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group fg-full">
+                                <label>Cardholder Name *</label>
+                                <input type="text" placeholder="John Doe">
+                            </div>
+                            <div class="form-group fg-full">
+                                <label>Card Number *</label>
+                                <input type="text" id="cardNum" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCard(this)">
+                            </div>
+                            <div class="form-group">
+                                <label>Expiry Date *</label>
+                                <input type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+                            </div>
+                            <div class="form-group">
+                                <label>CVC *</label>
+                                <input type="text" placeholder="123" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-nav">
+                        <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+                        <button class="btn btn-primary" onclick="goStep(3)">Review Order →</button>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-panel" id="panel3">
+                    <div class="form-card">
+                        <div class="form-card-title">📋 Review Your Order</div>
+                        <div id="reviewContent" style="color:var(--text-muted);font-size:0.95rem;line-height:2;"></div>
+                        <div style="margin-top:1.5rem;padding:1rem;background:rgba(57,255,20,0.06);border:1px solid rgba(57,255,20,0.2);border-radius:var(--radius-md);">
+                            <div style="display:flex;align-items:center;gap:0.5rem;color:var(--neon-green);font-weight:700;margin-bottom:0.3rem;">🔒 Your data is safe</div>
+                            <div style="font-size:0.82rem;color:var(--text-muted);">256-bit SSL encryption • PCI-DSS compliant • GDPR protected</div>
+                        </div>
+                    </div>
+                    <div class="step-nav">
+                        <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+                        <button class="btn btn-primary" onclick="placeOrder()" id="placeBtn">🎉 Place Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Sidebar -->
+            <div class="order-sidebar">
+                <div class="order-sidebar-title">Your Order</div>
+                <div id="orderList"></div>
+                <div class="order-divider"></div>
+                <div class="order-item-row"><span class="order-item-name">Subtotal</span><span class="order-item-price" id="co-subtotal">$0.00</span></div>
+                <div class="order-item-row"><span class="order-item-name">Tax (5%)</span><span class="order-item-price" id="co-tax">$0.00</span></div>
+                <div class="order-item-row"><span class="order-item-name">Shipping</span><span class="order-item-price" id="co-ship">$0.00</span></div>
+                <div class="order-divider"></div>
+                <div class="order-total-row"><span>Total</span><span id="co-total">$0.00</span></div>
+                <div class="security-note">🔒 256-bit SSL encryption</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-icon">✅</div>
+        <h2 style="background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Order Confirmed!</h2>
+        <p>Your healthcare essentials are on the way. Check your email for updates.</p>
+        <a href="index.html" class="btn btn-primary">Continue Shopping →</a>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <div class="copyright">© 2026 MediCare Inc. All rights reserved.</div>
+                <div class="footer-badges">
+                    <div class="footer-badge">🔐 SSL Secured</div>
+                    <div class="footer-badge">💳 PCI Compliant</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentStep = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (cart.length === 0) { window.location.href = 'cart.html'; return; }
+            renderSidebar();
+            initScrollProgress();
+            initHeader();
+            initParticles();
+        });
+
+        function initScrollProgress() {
+            const bar = document.getElementById('scrollProgress');
+            window.addEventListener('scroll', () => { if(bar) bar.style.width = (window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%'; }, {passive:true});
+        }
+        function initHeader() {
+            const h = document.getElementById('siteHeader');
+            window.addEventListener('scroll', () => h?.classList.toggle('scrolled', window.scrollY>60), {passive:true});
+        }
+        function initParticles() {
+            const c = document.getElementById('particleCanvas');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            const r = () => { c.width=window.innerWidth; c.height=window.innerHeight; };
+            window.addEventListener('resize',r,{passive:true}); r();
+            const dots = Array.from({length:40},()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()+.5}));
+            (function draw(){ ctx.clearRect(0,0,c.width,c.height); dots.forEach(d=>{d.x+=d.vx;d.y+=d.vy;if(d.x<0||d.x>c.width)d.vx*=-1;if(d.y<0||d.y>c.height)d.vy*=-1;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(0,212,255,0.25)';ctx.fill();}); requestAnimationFrame(draw); })();
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('orderList');
+            const sub = cart.reduce((a,i)=>a+i.price*(i.qty||1),0);
+            const tax = sub*.05; const ship = sub>=50?0:4.99; const total=sub+tax+ship;
+            list.innerHTML = cart.map(i=>`<div class="order-item-row"><span class="order-item-name">${i.qty||1}× ${i.name}</span><span class="order-item-price">$${(i.price*(i.qty||1)).toFixed(2)}</span></div>`).join('');
+            document.getElementById('co-subtotal').textContent=`$${sub.toFixed(2)}`;
+            document.getElementById('co-tax').textContent=`$${tax.toFixed(2)}`;
+            document.getElementById('co-ship').textContent=sub>=50?'🎉 Free':'$4.99';
+            document.getElementById('co-total').textContent=`$${total.toFixed(2)}`;
+        }
+
+        function goStep(n) {
+            document.getElementById(`panel${currentStep}`)?.classList.remove('active');
+            document.getElementById(`stepEl${currentStep}`)?.classList.remove('active');
+            document.getElementById(`stepEl${currentStep}`)?.classList.add('done');
+            if (n < currentStep) { document.getElementById(`stepEl${currentStep}`)?.classList.remove('done'); }
+            currentStep = n;
+            document.getElementById(`panel${n}`)?.classList.add('active');
+            document.getElementById(`stepEl${n}`)?.classList.add('active');
+            document.getElementById(`stepEl${n}`)?.classList.remove('done');
+            if (n >= 2) document.getElementById('line1')?.classList.add('active');
+            else document.getElementById('line1')?.classList.remove('active');
+            if (n >= 3) document.getElementById('line2')?.classList.add('active');
+            else document.getElementById('line2')?.classList.remove('active');
+            if (n === 3) renderReview();
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+
+        function renderReview() {
+            const fn = document.getElementById('fname')?.value||'—';
+            const ln = document.getElementById('lname')?.value||'—';
+            const em = document.getElementById('email')?.value||'—';
+            const ad = document.getElementById('addr')?.value||'—';
+            document.getElementById('reviewContent').innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div><strong style="color:var(--primary)">Name</strong><br>${fn} ${ln}</div>
+                    <div><strong style="color:var(--primary)">Email</strong><br>${em}</div>
+                    <div style="grid-column:1/-1"><strong style="color:var(--primary)">Delivery Address</strong><br>${ad}</div>
+                </div>`;
+        }
+
+        function selectPay(el) {
+            document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function validateField(el, type) {
+            let valid = false;
+            if (type==='email') valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+            else if (type==='zip') valid = el.value.length>=4;
+            else valid = el.value.trim().length>=2;
+            el.classList.toggle('valid', valid);
+            el.classList.toggle('invalid', !valid && el.value.length>0);
+        }
+
+        function formatCard(el) {
+            let v = el.value.replace(/\D/g,'').slice(0,16);
+            el.value = v.replace(/(.{4})/g,'$1 ').trim();
+        }
+
+        function formatExpiry(el) {
+            let v = el.value.replace(/\D/g,'').slice(0,4);
+            if (v.length>=3) v = v.slice(0,2)+' / '+v.slice(2);
+            el.value = v;
+        }
+
+        function placeOrder() {
+            const btn = document.getElementById('placeBtn');
+            btn.textContent = '⏳ Processing...';
+            btn.disabled = true;
+            setTimeout(() => {
+                localStorage.removeItem('cart');
+                document.getElementById('successOverlay').classList.add('active');
+            }, 1800);
+        }
+    </script>
+</body>
+</html>
