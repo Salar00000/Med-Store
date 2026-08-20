@@ -1,4 +1,5 @@
 import Product from './models/Product.js';
+import PromoCode from './models/PromoCode.js';
 
 const products = [
   { id: 1, name: 'Advanced Pain Relief', price: 12.99, originalPrice: 16.99, category: 'Medicine', emoji: '\u{1F48A}', desc: 'Fast-acting formula for severe pain relief. Pharmaceutical-grade ingredients.', rating: 4.8, reviews: 234 },
@@ -19,13 +20,20 @@ export async function seedProducts() {
   return products.length;
 }
 
+export async function seedPromoCodes() {
+  await PromoCode.deleteMany({});
+  await PromoCode.create({ code: 'MEDICARE10', discountPercent: 10 });
+  return 1;
+}
+
 // CLI entry: `npm run seed --workspace server`
 if (process.argv[1].endsWith('seed.js')) {
   import('./config/db.js')
     .then(({ connectDB }) => connectDB())
     .then(async () => {
       const count = await seedProducts();
-      console.log(`[seed] inserted ${count} products`);
+      const promoCount = await seedPromoCodes();
+      console.log(`[seed] inserted ${count} products and ${promoCount} promo code`);
       process.exit(0);
     })
     .catch((err) => { console.error(err); process.exit(1); });
