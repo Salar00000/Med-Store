@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { MiniCart } from './MiniCart.jsx';
 
 export function Header({ onSearch }) {
   const { count } = useCart();
+  const { user, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
@@ -44,7 +46,14 @@ export function Header({ onSearch }) {
             <li><Link to="/" className="nav-link active">Home</Link></li>
             <li><Link to="/medicines" className="nav-link">Medicines Info</Link></li>
             <li><Link to="/products" className="nav-link">Products</Link></li>
-            <li><Link to="/account" className="nav-link">My Orders</Link></li>
+            {user ? (
+              <>
+                <li><Link to="/account" className="nav-link">My Orders</Link></li>
+                <li><button className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={logout}>Sign Out</button></li>
+              </>
+            ) : (
+              <li><Link to="/auth" className="nav-link">Sign In</Link></li>
+            )}
           </ul>
           <div className="nav-actions">
             <div className="search-container">
