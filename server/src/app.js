@@ -6,6 +6,7 @@ import productsRoutes from './routes/products.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import ordersRoutes from './routes/orders.routes.js';
 import promoRoutes from './routes/promo.routes.js';
+import newsletterRoutes from './routes/newsletter.routes.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use('/api/products', productsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/promo', promoRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
