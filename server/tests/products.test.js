@@ -1,13 +1,12 @@
 import { beforeAll, afterAll, beforeEach, describe, it, expect } from 'vitest';
-import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../src/app.js';
 import { startMemoryDb, stopMemoryDb } from './setup.js';
 import Product from '../src/models/Product.js';
 import { seedProducts } from '../src/seed.js';
 
-beforeAll(async () => { await startMemoryDb(); await mongoose.connect(process.env.MONGO_URI); });
-afterAll(async () => { await mongoose.disconnect(); await stopMemoryDb(); });
+beforeAll(async () => { await startMemoryDb(); });
+afterAll(async () => { await stopMemoryDb(); });
 beforeEach(async () => {
   await Product.deleteMany({});
   await seedProducts();
