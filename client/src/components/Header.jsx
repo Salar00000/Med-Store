@@ -4,13 +4,12 @@ import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { MiniCart } from './MiniCart.jsx';
 
-export function Header({ onSearch }) {
+export function Header({ search, onSearchChange, onSearchSubmit }) {
   const { count } = useCart();
   const { user, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
-  const [search, setSearch] = useState('');
   const [miniOpen, setMiniOpen] = useState(false);
   const location = useLocation();
 
@@ -22,14 +21,17 @@ export function Header({ onSearch }) {
 
   useEffect(() => {
     setMenuOpen(false);
-    setSearch('');
-    onSearch?.('');
-  }, [location.pathname, onSearch]);
+  }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
+
+  const submitSearch = (e) => {
+    e?.preventDefault();
+    onSearchSubmit?.(search);
+  };
 
   return (
     <header className={`header ${scrolled ? 'scrolled' : ''}`} id="siteHeader">
@@ -56,19 +58,19 @@ export function Header({ onSearch }) {
             )}
           </ul>
           <div className="nav-actions">
-            <div className="search-container">
+            <form className="search-container" onSubmit={submitSearch}>
               <input
                 type="text"
                 className={`search-input ${searchActive || search ? 'active' : ''}`}
                 placeholder="Search products..."
                 aria-label="Search products"
                 value={search}
-                onChange={(e) => { setSearch(e.target.value); onSearch?.(e.target.value); }}
+                onChange={(e) => onSearchChange?.(e.target.value)}
                 onFocus={() => setSearchActive(true)}
                 onBlur={() => setSearchActive(false)}
               />
-              <button className="search-btn" aria-label="Search" onClick={() => setSearchActive(true)}>🔍</button>
-            </div>
+              <button type="submit" className="search-btn" aria-label="Search" onClick={() => setSearchActive(true)}>🔍</button>
+            </form>
             <Link
               to="/cart"
               className="cart-btn"

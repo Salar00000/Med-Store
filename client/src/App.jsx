@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
 import { WishlistProvider } from './context/WishlistContext.jsx';
@@ -19,6 +20,18 @@ import { useScrollEffects } from './hooks/useScrollEffects.js';
 
 export default function App() {
   useScrollEffects();
+  const [search, setSearch] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get('q') || '';
+    setSearch(q);
+  }, [location.search]);
+
+  const submitSearch = (q) => {
+    navigate(q ? `/products?q=${encodeURIComponent(q)}` : '/products');
+  };
 
   return (
     <ToastProvider>
@@ -27,10 +40,10 @@ export default function App() {
           <WishlistProvider>
             <div id="scrollProgress"></div>
             <Particles />
-            <Header onSearch={() => {}} />
+            <Header search={search} onSearchChange={setSearch} onSearchSubmit={submitSearch} />
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/products" element={<ProductsPage search="" />} />
+              <Route path="/products" element={<ProductsPage search={search} />} />
               <Route path="/medicines" element={<MedicinesPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
