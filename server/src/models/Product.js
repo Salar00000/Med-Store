@@ -17,4 +17,7 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Text index for efficient full-text search
+productSchema.index({ name: 'text', desc: 'text', category: 'text' });
+
 export default mongoose.model('Product', productSchema);
