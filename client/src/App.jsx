@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
@@ -9,14 +9,35 @@ import { Footer } from './components/Footer.jsx';
 import { Fab } from './components/Fab.jsx';
 import { Particles } from './components/Particles.jsx';
 import { ProtectedRoute } from './components/ProtectedRoute.jsx';
-import { HomePage } from './pages/HomePage.jsx';
-import { ProductsPage } from './pages/ProductsPage.jsx';
-import { MedicinesPage } from './pages/MedicinesPage.jsx';
-import { CartPage } from './pages/CartPage.jsx';
-import { CheckoutPage } from './pages/CheckoutPage.jsx';
-import { AuthPage } from './pages/AuthPage.jsx';
-import { AccountPage } from './pages/AccountPage.jsx';
+import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 import { useScrollEffects } from './hooks/useScrollEffects.js';
+
+// Lazy-load route components for code-splitting and smaller initial bundle
+const HomePage = lazy(() => import('./pages/HomePage.jsx').then((m) => ({ default: m.HomePage })));
+const ProductsPage = lazy(() => import('./pages/ProductsPage.jsx').then((m) => ({ default: m.ProductsPage })));
+const MedicinesPage = lazy(() => import('./pages/MedicinesPage.jsx').then((m) => ({ default: m.MedicinesPage })));
+const CartPage = lazy(() => import('./pages/CartPage.jsx').then((m) => ({ default: m.CartPage })));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage.jsx').then((m) => ({ default: m.CheckoutPage })));
+const AuthPage = lazy(() => import('./pages/AuthPage.jsx').then((m) => ({ default: m.AuthPage })));
+const AccountPage = lazy(() => import('./pages/AccountPage.jsx').then((m) => ({ default: m.AccountPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx').then((m) => ({ default: m.NotFoundPage })));
+
+/** Loading fallback shown while a lazy route chunk is being fetched */
+function PageLoader() {
+  return (
+    <div className="container" style={{
+      minHeight: '50vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <div className="no-results" style={{ display: 'block', textAlign: 'center' }}>
+        <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⏳</div>
+        <h3>Loading...</h3>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   useScrollEffects();
@@ -41,16 +62,20 @@ export default function App() {
             <div id="scrollProgress"></div>
             <Particles />
             <Header search={search} onSearchChange={setSearch} onSearchSubmit={submitSearch} />
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/products" element={<ProductsPage search={search} />} />
-              <Route path="/medicines" element={<MedicinesPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
-              <Route path="*" element={<HomePage />} />
-            </Routes>
+            <ErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/products" element={<ProductsPage search={search} />} />
+                  <Route path="/medicines" element={<MedicinesPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/checkout" element={<CheckoutPage />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
             <Footer />
             <Fab />
           </WishlistProvider>
